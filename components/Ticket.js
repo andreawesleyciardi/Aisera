@@ -1,7 +1,10 @@
 const ticketTemplate = document.createElement('template');
 ticketTemplate.innerHTML = `
-    <div class="wrapper">
-        <p data-title></p>
+    <div class="ticketWrapper">
+        <div data-header>
+            <p data-title></p>
+            <button data-cancel title="Remove ticket">X</button>
+        </div>
         <div class="left">
             <img data-type />
             <img data-priority src="assets/priority.svg" />
@@ -11,7 +14,7 @@ ticketTemplate.innerHTML = `
         </div>
         <div class="right">
             <div data-id></div>
-            <ais-user name="Andrea Ciardi"></ais-user>
+            <ais-user data-assignee></ais-user>
         </div>
     </div>
 `;
@@ -30,10 +33,15 @@ class Ticket extends HTMLElement {
 		const textId = this.getAttribute('id');
 		const id = this.shadow.querySelector('[data-id]');
 		id.textContent = textId;
+		this.setAttribute('data-index', textId);
+		// assignee
+		const textAssignee = this.getAttribute('assignee');
+		const assignee = this.shadow.querySelector('[data-assignee]');
+		assignee.setAttribute('name', textAssignee);
 		// style
 		const style = document.createElement('style');
 		style.textContent = `
-            .wrapper {
+            .ticketWrapper {
                 margin-top: 0.261rem;
                 padding: 0.521rem;
                 background-color: #fff;
@@ -41,17 +49,23 @@ class Ticket extends HTMLElement {
                 box-shadow: 0px 1px 2px 0px rgba(9, 30, 66, 0.25);
                 font-size: 0.73rem;
                 display: grid;
-                grid-template-areas: 'title title' 'left right';
+                grid-template-areas: 'header header' 'left right';
                 gap: 0.521rem;
             }
+            [data-header] {
+                grid-area: header;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
             [data-title] {
-                grid-area: title;
                 font-size: 0.73rem;
                 font-weight: 400;
                 color: #172b4d;
                 line-height: 1.42857143;
                 max-height: 3.127rem;
                 overflow: hidden;
+                margin: 0px;
             }
             [data-type],
             [data-priority] {
@@ -96,14 +110,31 @@ class Ticket extends HTMLElement {
                 font-weight: 400;
                 color: #505f79;
             }
+            [data-cancel] {
+                border: none;
+                color: #6b778c;
+                background-color: transparent;
+                opacity: 0;
+                cursor: pointer;
+            }
+            [data-header]:hover [data-cancel] {
+                opacity: 1;
+            }
         `;
 		this.shadow.appendChild(style);
+
+		// button
+		const that = this;
+		const button = this.shadow.querySelector('[data-cancel]');
+		button.addEventListener('click', function (e) {
+			that.delete(that, textId);
+		});
 	}
 }
 
 Ticket.prototype.setTypeImg = function (shadow, img) {
 	const type = shadow.querySelector('[data-type]');
-	type.setAttribute('src', `/assets/${img}`);
+	type.setAttribute('src', `assets/${img}`);
 };
 
 class Story extends Ticket {

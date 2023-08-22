@@ -1,8 +1,9 @@
 const columnTemplate = document.createElement('template');
 columnTemplate.innerHTML = `
-    <div data-wrapper class="wrapper">
+    <div data-wrapper class="columnWrapper">
         <header data-header>
             <p data-title></p>
+            <button data-cancel title="Remove column">X</button>
         </header>
         <section data-body>
             <slot></slot>
@@ -20,16 +21,17 @@ class Column extends HTMLElement {
 		const textTitle = this.getAttribute('title');
 		const title = this.shadow.querySelector('[data-title]');
 		title.textContent = textTitle;
-		// id
-		const textId = this.getAttribute('id');
+		// key
+		const textKey = this.getAttribute('key');
 		const wrapper = this.shadow.querySelector('[data-wrapper]');
-		wrapper.setAttribute('id', `column-${textId}`);
+		this.setAttribute('id', `column-${textKey}`);
 		const body = this.shadow.querySelector('[data-body]');
-		body.setAttribute('id', `column-body-${textId}`);
+		body.setAttribute('id', `column-body-${textKey}`);
 
 		const style = document.createElement('style');
 		style.textContent = `
-            .wrapper {
+            .columnWrapper {
+                height: 100%;
                 display: flex;
                 flex-direction: column;
                 gap: 10px;
@@ -50,18 +52,43 @@ class Column extends HTMLElement {
                 color: #5e6c84;
                 display: flex;
                 align-items: center;
+                justify-content: space-between;
                 padding: 17px;
             }
             [data-body] {
+                height: 100%;
                 display: flex;
                 flex-direction: column;
                 gap: 0.261rem;
                 padding: 0.261rem;
             }
+            [data-cancel] {
+                border: none;
+                color: #6b778c;
+                background-color: transparent;
+                opacity: 0;
+                cursor: pointer;
+            }
+            [data-header]:hover [data-cancel] {
+                opacity: 1;
+            }
         `;
 		this.shadow.appendChild(style);
+
+		// button
+		const that = this;
+		const button = this.shadow.querySelector('[data-cancel]');
+		button.addEventListener('click', function (e) {
+			that.delete(that, textKey);
+		});
 	}
 }
+
+Column.prototype.delete = function (that, textKey) {
+	const container = that.closest(`#column-${textKey}-container`);
+	updateColumns(textKey);
+	container.remove();
+};
 
 // Define element
 customElements.define('ais-column', Column);

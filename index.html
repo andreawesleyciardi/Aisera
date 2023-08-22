@@ -3,9 +3,13 @@
 		<meta charset="UTF-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 		<script defer src="components/User.js"></script>
 		<script defer src="components/Column.js"></script>
 		<script defer src="components/Ticket.js"></script>
+		<script defer src="components/Grid.js"></script>
+		<script defer src="components/Modal.js"></script>
+
 		<title>Assignement</title>
 		<link href="style.css" rel="stylesheet" />
 	</head>
@@ -79,7 +83,7 @@
 						</svg>
 					</div>
 					<div class="jira__icons">
-						<div class="jira__user">AC</div>
+						<ais-user name="Andrea Ciardi"></ais-user>
 					</div>
 				</div>
 			</div>
@@ -325,7 +329,7 @@
 									<path d="M16.436 15.085l3.94 4.01a1 1 0 01-1.425 1.402l-3.938-4.006a7.5 7.5 0 111.423-1.406zM10.5 16a5.5 5.5 0 100-11 5.5 5.5 0 000 11z" fill="currentColor" fillRule="evenodd"></path>
 								</svg>
 							</div>
-							<div class="jira__user">AC</div>
+							<ais-user class="jira__user" name="Andrea Ciardi" width="1.668rem" font-size="0.73rem"></ais-user>
 							<div class="jira__main-quick-filters">
 								<p>Quick filters</p>
 								<svg width="24" height="24" viewBox="0 0 24 24" role="presentation">
@@ -335,6 +339,8 @@
 						</div>
 						<div class="jira__main--header-bottom-right">
 							<div class="jira__main-insights">
+								<button type="button" id="addTicket">Add Ticket</button>
+								<button type="button" id="addColumn">Add Column</button>
 								<svg width="24" height="24" viewBox="0 0 24 24" role="presentation">
 									<g fill="currentColor">
 										<path d="M21 17H4.995C4.448 17 4 16.548 4 15.991V6a1 1 0 10-2 0v9.991A3.004 3.004 0 004.995 19H21a1 1 0 000-2zm-3-8v3a1 1 0 002 0V8a1 1 0 00-1-1h-4a1 1 0 000 2h3z"></path>
@@ -347,18 +353,24 @@
 					</div>
 				</div>
 				<div class="jira__main--grid">
-					<ais-column title="To Do" id="todo">
-						<ais-story title="Test Title Story" points="5" id="AIS-002"></ais-story>
-						<ais-task title="Test Title Task" points="5" id="AIS-003"></ais-task>
-						<ais-subtask title="Test Title SubTask" points="5" id="AIS-004"></ais-subtask>
-						<ais-bug title="Test Title Bug" points="5" id="AIS-005"></ais-bug>
-					</ais-column>
-					<ais-column title="In Progress" id="inprogress"></ais-column>
-					<ais-column title="Under QA" id="qa"></ais-column>
-					<ais-column title="Done" id="done"></ais-column>
+					<ais-grid class="jira__main--grid-columns"> </ais-grid>
+					<!-- <div class="jira__main--grid-columns">
+						<ais-column title="To Do" key="todo">
+							<ais-story title="Test Title Story" points="5" id="AIS-002" assignee="Andrea Ciardi" status="todo"></ais-story>
+							<ais-task title="Test Title Task" id="AIS-003" assignee="Gabriel Ciardi" status="todo"></ais-task>
+							<ais-subtask title="Test Title SubTask" id="AIS-004" assignee="Agapi Panagiotidou" status="inprogress"></ais-subtask>
+							<ais-bug title="Test Title Bug" id="AIS-005" assignee="Srijesh Karthikeyan" status="underqa"></ais-bug>
+						</ais-column>
+						<ais-column title="In Progress" key="inprogress"></ais-column>
+						<ais-column title="Under QA" key="underqa"></ais-column>
+						<ais-column title="Done" key="done"></ais-column>
+						<ais-column title="Test" key="test"></ais-column>
+					</div> -->
 				</div>
+				<div id="testxxx"></div>
 			</div>
 		</div>
+		<ais-modal show="false"></ais-modal>
 
 		<script src="index.js"></script>
 	</body>
