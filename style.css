@@ -9,6 +9,33 @@
 	box-sizing: border-box;
 }
 
+html {
+	@media (max-width: 499px) {
+		font-size: 70%;
+	}
+	@media (min-width: 500px) {
+		font-size: 75%;
+	}
+	@media (min-width: 800px) {
+		font-size: 85%;
+	}
+	@media (min-width: 1000px) {
+		font-size: 85%;
+	}
+	@media (min-width: 1150px) {
+		font-size: 92.5%;
+	}
+	@media (min-width: 1300px) {
+		font-size: 100%;
+	}
+	@media (min-width: 1520px) {
+		font-size: 110%;
+	}
+	@media (min-width: 1700px) {
+		font-size: 120%;
+	}
+}
+
 body {
 	/* background-color: var(--background); */
 	position: relative;
@@ -332,54 +359,13 @@ body {
 	margin-left: 0.156rem;
 }
 .jira .jira__main .jira__main--grid {
+	min-width: 100%;
 	height: 100%;
-	display: grid;
-	grid-template-areas: 'todo inprogress qa done' 'todocolumn inprogresscolumn qacolumn donecolumn';
-	grid-template-rows: max-content auto;
-	gap: 10px;
-}
-.jira .jira__main .jira__main--grid .jira__main--grid-header,
-.jira .jira__main .jira__main--grid .jira__main--grid-column {
-	background-color: #f4f5f7;
-	border-radius: 4px;
-}
-.jira .jira__main .jira__main--grid .jira__main--grid-header {
-	font-size: 0.85714286rem;
-	color: #5e6c84;
 	display: flex;
+	gap: 10px;
 	align-items: center;
-	padding: 17px;
-}
-.jira .jira__main .jira__main--grid .jira__main--grid-header p {
-	font-size: 0.625rem;
-	font-weight: 600;
-}
-.jira .jira__main .jira__main--grid .jira__main--grid-header--todo {
-	grid-area: todo;
-}
-.jira .jira__main .jira__main--grid .jira__main--grid-header--inprogress {
-	grid-area: inprogress;
-}
-.jira .jira__main .jira__main--grid .jira__main--grid-header--qa {
-	grid-area: qa;
-}
-.jira .jira__main .jira__main--grid .jira__main--grid-header--done {
-	grid-area: done;
-}
-.jira .jira__main .jira__main--grid .jira__main--grid-column--todo {
-	grid-area: todocolumn;
-}
-.jira .jira__main .jira__main--grid .jira__main--grid-column--inprogress {
-	grid-area: inprogresscolumn;
-}
-.jira .jira__main .jira__main--grid .jira__main--grid-column--qa {
-	grid-area: qacolumn;
-}
-.jira .jira__main .jira__main--grid .jira__main--grid-column--done {
-	grid-area: donecolumn;
-}
-.jira .jira__main .jira__main--grid .jira__main--grid-column {
-	padding: 0px 0.261rem 0.261rem 0.261rem;
+	justify-content: space-evenly;
+	flex: 1 1 0px;
 }
 .jira .jira__icons {
 	padding: 8px;
@@ -389,77 +375,4 @@ body {
 }
 .jira .jira__text--low-enphasis {
 	color: #6b778c;
-}
-.jira .jira__user {
-	width: 1.25rem;
-	aspect-ratio: 1;
-	color: #fff;
-	background-color: #172b4d;
-	border-radius: 50%;
-	line-height: 1.1;
-	font-size: 0.6rem;
-	font-weight: 700;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-/*------------------------------------------------------------------------------------*/
-.jira__ticket {
-	margin-top: 0.261rem;
-	padding: 0.521rem;
-	background-color: #fff;
-	border-radius: 0.104rem;
-	box-shadow: 0px 1px 2px 0px rgba(9, 30, 66, 0.25);
-	font-size: 0.73rem;
-	display: grid;
-	grid-template-areas: 'title title' 'left right';
-	gap: 0.521rem;
-}
-.jira__ticket--title {
-	grid-area: title;
-	font-size: 0.73rem;
-	font-weight: 400;
-	color: #172b4d;
-	line-height: 1.42857143;
-	max-height: 3.127rem;
-	overflow: hidden;
-}
-.jira__ticket .jira__ticket--left {
-	grid-area: left;
-	display: flex;
-	align-items: center;
-	justify-content: flex-start;
-	gap: 0.261rem;
-}
-.jira__ticket .jira__ticket--left svg {
-	width: 0.834rem;
-	aspect-ratio: 1;
-}
-.jira__ticket .jira__ticket--left .jira__ticket--points {
-	min-width: 1.355rem;
-	height: 1.094rem;
-	background-color: #dfe1e6;
-	padding: 0.156rem 0.365rem;
-	border-radius: 1.251rem;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-.jira__ticket .jira__ticket--left .jira__ticket--points p {
-	font-size: 0.625;
-	font-weight: 600;
-	line-height: 0.834rem;
-	color: #172b4d;
-}
-.jira__ticket .jira__ticket--right {
-	grid-area: right;
-	display: flex;
-	align-items: center;
-	justify-content: flex-end;
-}
-.jira__ticket .jira__ticket--right .jira__ticket--code {
-	margin-right: 0.261rem;
-	font-size: 0.73rem;
-	font-weight: 400;
-	color: #505f79;
 }
