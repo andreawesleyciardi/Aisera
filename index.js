@@ -1,15 +1,15 @@
 let columns = [
-	// { title: 'To Do', key: 'todo' },
+	{ title: 'To Do', key: 'todo' },
 	// { title: 'In Progress', key: 'inprogress' },
 	// { title: 'Under QA', key: 'underqa' },
 	// { title: 'Done', key: 'done' },
-].concat([undefined, null, '', '[]'].includes(localStorage.getItem('columns')) === false ? JSON.parse(localStorage.getItem('columns')) : []);
+].concat([undefined, null, '', '[]'].includes(localStorage.getItem('columns')) === false ? JSON.parse(localStorage.getItem('columns')).filter((item) => item.key != 'todo') : []);
 
 const testTickets = [
-	{ id: 'AIS-TEST', type: 'story', title: 'Test Ticket 1', assignee: 'Andrea Ciardi', status: 'todo', points: 5 },
-	{ id: 'AIS-TEST', type: 'task', title: 'Test Ticket 2', assignee: 'Gabriel Ciardi', status: 'inprogress' },
-	{ id: 'AIS-TEST', type: 'subtask', title: 'Test Ticket 3', assignee: 'Agapi Panagiotidou', status: 'todo' },
-	{ id: 'AIS-TEST', type: 'bug', title: 'Test Ticket 4', assignee: 'John Smith', status: 'underqa' },
+	// { id: 'AIS-TEST', type: 'story', title: 'Test Ticket 1', assignee: 'Andrea Ciardi', status: 'todo', points: 5 },
+	// { id: 'AIS-TEST', type: 'task', title: 'Test Ticket 2', assignee: 'Gabriel Ciardi', status: 'inprogress' },
+	// { id: 'AIS-TEST', type: 'subtask', title: 'Test Ticket 3', assignee: 'Agapi Panagiotidou', status: 'todo' },
+	// { id: 'AIS-TEST', type: 'bug', title: 'Test Ticket 4', assignee: 'John Smith', status: 'underqa' },
 ];
 let tickets = [undefined, null, '', '[]'].includes(localStorage.getItem('tickets')) === false ? JSON.parse(localStorage.getItem('tickets')) : testTickets;
 
@@ -82,8 +82,15 @@ const createTicket = function (element) {
 	const column = document.querySelector(`ais-column[key="${element.status}"]`);
 	const ticket = document.createElement('div');
 	ticket.setAttribute('id', `ticket-${element.key}-container`);
-	ticket.innerHTML = `<ais-${element.type} type="${element.type}" id="${element.id}" title="${element.title}" points="${element.points}" assignee="${element.assignee}" status="${element.status}" />`;
-	column.append(ticket);
+	ticket.innerHTML = `<ais-ticket type="${element.type}" id="${element.id}" title="${element.title}" points="${element.points}" assignee="${element.assignee}" status="${element.status}" />`;
+	if (column != null) {
+		column.append(ticket);
+	}
+};
+
+const updateTicket = function (element) {
+	const ticket = document.querySelector(`#${element.id}`);
+	ticket.setAttribute('title', element.title);
 };
 
 const updateTickets = function (id) {
@@ -106,7 +113,13 @@ const getEditTicketTemplate = function (action, element) {
                 <h3>${action === 'add' ? 'Add' : 'Edit'} Ticket</h3>
                 <div ${action === 'edit' && 'style="display: none"'}>
                     <label for="type">Type</label>
-                    <input type="text" name="type" value="${element?.type ?? ''}" />
+                    <select name="type" value="${element?.type ?? ''}">
+                        <option value="story">Story</option>
+                        <option value="task">Task</option>
+                        <option value="subtask">SubTask</option>
+                        <option value="bug">Bug</option>
+                    </select>
+                    
                 </div>
                 <div ${action === 'edit' && 'style="display: none"'}>
                     <label for="id">Id</label>
@@ -116,13 +129,17 @@ const getEditTicketTemplate = function (action, element) {
                     <label for="title">Title</label>
                     <input type="text" name="title" value="${element?.title ?? ''}" />
                 </div>
-                <div ${element?.points === 'undefined' && 'style="display: none"'}>
+                <div ${element?.type !== 'story' && 'style="display: none"'}>
                     <label for="points">Points</label>
                     <input type="number" name="points" value="${element?.points ?? ''}" />
                 </div>
                 <div>
                     <label for="assignee">Assignee</label>
                     <input type="text" name="assignee" value="${element?.assignee ?? ''}" />
+                </div>
+                <div style="display: none">
+                    <label for="status">Status</label>
+                    <input type="text" name="status" value="${element?.status ?? ''}" />
                 </div>
 
                 <div class="button-container">
@@ -142,28 +159,9 @@ const onAddTicket = function () {
 const addTicketButton = document.querySelector('#addTicket');
 addTicketButton.addEventListener('click', onAddTicket);
 
-const addTicket = function (e) {
-	const form = e.target.closest('form');
-	let fields = {};
-
-	fields.type = form.querySelector('[name="type"]').value;
-	fields.id = form.querySelector('[name="id"]').value;
-	fields.title = form.querySelector('[name="title"]').value;
-	fields.points = form.querySelector('[name="points"]').value;
-	fields.assignee = form.querySelector('[name="assignee"]').value;
-
-	if (validate(fields.type) && validate(fields.id) && validate(fields.title) && validate(fields.assignee) && (fields.type !== 'story' || (fields.type === 'story' && validate(fields.points)))) {
-		fields.status = 'todo';
-
-		tickets.push(fields);
-		localStorage.setItem('tickets', JSON.stringify(tickets));
-
-		createTicket(fields);
-
-		closeModal();
-	} else {
-		alert('Please, complete the Form.');
-	}
+const onEditTicket = function (element) {
+	editTicketTemplate.innerHTML = getEditTicketTemplate('edit', element);
+	openModal(editTicketTemplate);
 };
 
 const manageTicket = function (action, e) {
@@ -175,30 +173,33 @@ const manageTicket = function (action, e) {
 	fields.title = form.querySelector('[name="title"]').value;
 	fields.points = form.querySelector('[name="points"]').value;
 	fields.assignee = form.querySelector('[name="assignee"]').value;
+	fields.status = form.querySelector('[name="status"]').value;
 
 	if (validate(fields.type) && validate(fields.id) && validate(fields.title) && validate(fields.assignee) && (fields.type !== 'story' || (fields.type === 'story' && validate(fields.points)))) {
-		fields.status = fields.status ?? 'todo';
+		fields.status = [undefined, null, '', '[]'].includes(fields.status) ? 'todo' : fields.status;
 
 		if (action == 'add') {
 			tickets.push(fields);
 		} else {
+			const index = tickets.findIndex((element, index) => element.id === fields.id);
+			tickets[index] = fields;
 		}
+
 		localStorage.setItem('tickets', JSON.stringify(tickets));
 
 		if (action == 'add') {
 			createTicket(fields);
 		} else {
+			const ticket = document.querySelector(`#${fields.id}`);
+			Object.keys(fields).forEach((key) => {
+				ticket.setAttribute(key, fields[key]);
+			});
 		}
 
 		closeModal();
 	} else {
 		alert('Please, complete the Form.');
 	}
-};
-
-const onEditTicket = function (element) {
-	editTicketTemplate.innerHTML = getEditTicketTemplate('edit', element);
-	openModal(editTicketTemplate);
 };
 
 // Modal

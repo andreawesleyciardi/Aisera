@@ -16,6 +16,7 @@ ticketTemplate.innerHTML = `
             <div data-id></div>
             <ais-user data-assignee></ais-user>
         </div>
+        <div data-status style="display: none;"></div>
     </div>
 `;
 
@@ -25,19 +26,28 @@ class Ticket extends HTMLElement {
 		// shadow root
 		this.shadow = this.attachShadow({ mode: 'open' });
 		this.shadow.append(ticketTemplate.content.cloneNode(true));
-		// title
-		const textTitle = this.getAttribute('title');
-		const title = this.shadow.querySelector('[data-title]');
-		title.textContent = textTitle;
-		// id
+
+		// this.update(this, {
+		// 	type: this.getAttribute('type'),
+		// 	id: this.getAttribute('id'),
+		// 	title: this.getAttribute('title'),
+		// 	points: this.getAttribute('points'),
+		// 	status: this.getAttribute('status'),
+		// 	assignee: this.getAttribute('assignee'),
+		// });
+		// // title
+		// const textTitle = this.getAttribute('title');
+		// const title = this.shadow.querySelector('[data-title]');
+		// title.textContent = textTitle;
+		// // id
 		const textId = this.getAttribute('id');
-		const id = this.shadow.querySelector('[data-id]');
-		id.textContent = textId;
-		this.setAttribute('data-index', textId);
-		// assignee
-		const textAssignee = this.getAttribute('assignee');
-		const assignee = this.shadow.querySelector('[data-assignee]');
-		assignee.setAttribute('name', textAssignee);
+		// const id = this.shadow.querySelector('[data-id]');
+		// id.textContent = textId;
+		// this.setAttribute('data-index', textId);
+		// // assignee
+		// const textAssignee = this.getAttribute('assignee');
+		// const assignee = this.shadow.querySelector('[data-assignee]');
+		// assignee.setAttribute('name', textAssignee);
 		// style
 		const style = document.createElement('style');
 		style.textContent = `
@@ -51,6 +61,9 @@ class Ticket extends HTMLElement {
                 display: grid;
                 grid-template-areas: 'header header' 'left right';
                 gap: 0.521rem;
+            }
+            .ticketWrapper:hover {
+                background-color: #091e420f;
             }
             [data-header] {
                 grid-area: header;
@@ -67,6 +80,9 @@ class Ticket extends HTMLElement {
                 overflow: hidden;
                 margin: 0px;
                 cursor: pointer;
+            }
+            [data-title]:hover {
+                color: #0052cc;
             }
             [data-type],
             [data-priority] {
@@ -126,13 +142,14 @@ class Ticket extends HTMLElement {
 
 		// buttons
 		const that = this;
+		const title = this.shadow.querySelector('[data-title]');
 		title.addEventListener('click', (e) => {
 			onEditTicket({
 				type: this.getAttribute('type'),
-				id: textId,
-				title: textTitle,
+				id: this.getAttribute('id'),
+				title: this.getAttribute('title'),
 				points: this.getAttribute('points'),
-				assignee: textAssignee,
+				assignee: this.getAttribute('assignee'),
 				status: this.getAttribute('status'),
 			});
 		});
@@ -141,54 +158,57 @@ class Ticket extends HTMLElement {
 			that.delete(that, textId);
 		});
 	}
+
+	static get observedAttributes() {
+		return ['type', 'id', 'title', 'points', 'assignee', 'status'];
+	}
+
+	attributeChangedCallback(name, oldValue, newValue) {
+		this.update(this, { [name]: newValue });
+	}
 }
+
+Ticket.prototype.delete = function (that, id) {
+	const container = that.closest(`#${id}`);
+	updateTickets(id);
+	container.remove();
+};
+
+Ticket.prototype.update = function (that, element) {
+	if (element.type != null) {
+		const type = that.shadow.querySelector('[data-type]');
+		type.setAttribute('src', `assets/${element.type}.svg`);
+
+		const pointsContainer = that.shadow.querySelector('[data-points-container]');
+		pointsContainer.classList[element.type === 'story' ? 'remove' : 'add']('hidden');
+	}
+	if (element.id != null) {
+		const id = that.shadow.querySelector('[data-id]');
+		id.textContent = element.id;
+		that.setAttribute('data-index', element.id);
+	}
+	if (element.title != null) {
+		const title = that.shadow.querySelector('[data-title]');
+		title.textContent = element.title;
+	}
+	if (element.points != null && that.getAttribute('type') === 'story') {
+		const points = that.shadow.querySelector('[data-points]');
+		points.textContent = element.points;
+	}
+	if (element.status != null) {
+		const status = that.shadow.querySelector('[data-status]');
+		status.setAttribute('status', element.status);
+	}
+	if (element.assignee != null) {
+		const assignee = that.shadow.querySelector('[data-assignee]');
+		assignee.setAttribute('name', element.assignee);
+	}
+};
 
 Ticket.prototype.setTypeImg = function (shadow, img) {
 	const type = shadow.querySelector('[data-type]');
 	type.setAttribute('src', `assets/${img}`);
 };
 
-class Story extends Ticket {
-	constructor() {
-		super();
-		// show points
-		const pointsContainer = this.shadow.querySelector('[data-points-container]');
-		pointsContainer.classList.remove('hidden');
-		// points
-		const textPoints = this.getAttribute('points');
-		const points = this.shadow.querySelector('[data-points]');
-		points.textContent = textPoints;
-		// type img
-		this.setTypeImg(this.shadow, 'story.svg');
-	}
-}
-
-class Task extends Ticket {
-	constructor() {
-		super();
-		// type img
-		this.setTypeImg(this.shadow, 'task.svg');
-	}
-}
-
-class Subtask extends Ticket {
-	constructor() {
-		super();
-		// type img
-		this.setTypeImg(this.shadow, 'subtask.svg');
-	}
-}
-
-class Bug extends Ticket {
-	constructor() {
-		super();
-		// type img
-		this.setTypeImg(this.shadow, 'bug.svg');
-	}
-}
-
 // define elements
-customElements.define('ais-story', Story);
-customElements.define('ais-task', Task);
-customElements.define('ais-subtask', Subtask);
-customElements.define('ais-bug', Bug);
+customElements.define('ais-ticket', Ticket);

@@ -61,7 +61,8 @@ button {
 	font-weight: 600;
 }
 button:hover {
-	filter: brightness(0.9);
+	color: #0052cc;
+	background-color: #cadefc;
 }
 
 fieldset {
@@ -77,6 +78,7 @@ form {
 
 form fieldset h3 {
 	text-align: center;
+	margin-bottom: 1rem;
 }
 
 form fieldset > div:not(.button-container) {
@@ -97,13 +99,17 @@ form fieldset label:after {
 	content: ':';
 }
 
-form fieldset input {
+form fieldset input,
+form fieldset select {
 	border-width: 0px 0px 1px 0px;
 	border-color: DDDDDD;
 }
 form fieldset input:focus,
 form fieldset input:focus-visible,
-form fieldset input:active {
+form fieldset input:active,
+form fieldset select:focus,
+form fieldset select:focus-visible,
+form fieldset select:active {
 	outline: none;
 }
 
