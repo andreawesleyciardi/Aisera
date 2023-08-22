@@ -66,6 +66,7 @@ class Ticket extends HTMLElement {
                 max-height: 3.127rem;
                 overflow: hidden;
                 margin: 0px;
+                cursor: pointer;
             }
             [data-type],
             [data-priority] {
@@ -123,8 +124,18 @@ class Ticket extends HTMLElement {
         `;
 		this.shadow.appendChild(style);
 
-		// button
+		// buttons
 		const that = this;
+		title.addEventListener('click', (e) => {
+			onEditTicket({
+				type: this.getAttribute('type'),
+				id: textId,
+				title: textTitle,
+				points: this.getAttribute('points'),
+				assignee: textAssignee,
+				status: this.getAttribute('status'),
+			});
+		});
 		const button = this.shadow.querySelector('[data-cancel]');
 		button.addEventListener('click', function (e) {
 			that.delete(that, textId);

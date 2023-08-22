@@ -98,43 +98,47 @@ const updateTickets = function (id) {
 	}
 };
 
-const addTicketTemplate = document.createElement('template');
-addTicketTemplate.innerHTML = `
-    <form>
-        <fieldset>
-            <h3>Add Ticket</h3>
-            <div>
-                <label for="type">Type</label>
-                <input type="text" name="type" />
-            </div>
-            <div>
-                <label for="id">Id</label>
-                <input type="text" name="id" />
-            </div>
-            <div>
-                <label for="title">Title</label>
-                <input type="text" name="title" />
-            </div>
-            <div>
-                <label for="points">Points</label>
-                <input type="number" name="points" />
-            </div>
-            <div>
-                <label for="assignee">Assignee</label>
-                <input type="text" name="assignee" />
-            </div>
+const editTicketTemplate = document.createElement('template');
+const getEditTicketTemplate = function (action, element) {
+	return `
+        <form>
+            <fieldset>
+                <h3>${action === 'add' ? 'Add' : 'Edit'} Ticket</h3>
+                <div ${action === 'edit' && 'style="display: none"'}>
+                    <label for="type">Type</label>
+                    <input type="text" name="type" value="${element?.type ?? ''}" />
+                </div>
+                <div ${action === 'edit' && 'style="display: none"'}>
+                    <label for="id">Id</label>
+                    <input type="text" name="id" value="${element?.id ?? ''}" />
+                </div>
+                <div>
+                    <label for="title">Title</label>
+                    <input type="text" name="title" value="${element?.title ?? ''}" />
+                </div>
+                <div ${element?.points === 'undefined' && 'style="display: none"'}>
+                    <label for="points">Points</label>
+                    <input type="number" name="points" value="${element?.points ?? ''}" />
+                </div>
+                <div>
+                    <label for="assignee">Assignee</label>
+                    <input type="text" name="assignee" value="${element?.assignee ?? ''}" />
+                </div>
 
-            <div class="button-container">
-                <button class="cancelModal" type="button">Cancel</button>
-                <button id="confirmAddTicket" type="button">Save</button>
-            </div>
-        </fieldset>
-    </form>
-`;
+                <div class="button-container">
+                    <button class="cancelModal" type="button">Cancel</button>
+                    <button id="${action === 'add' ? 'confirmAddTicket' : 'confirmEditTicket'}" type="button">Save</button>
+                </div>
+            </fieldset>
+        </form>
+    `;
+};
 
 const onAddTicket = function () {
-	openModal(addTicketTemplate);
+	editTicketTemplate.innerHTML = getEditTicketTemplate('add', null);
+	openModal(editTicketTemplate);
 };
+
 const addTicketButton = document.querySelector('#addTicket');
 addTicketButton.addEventListener('click', onAddTicket);
 
@@ -162,6 +166,41 @@ const addTicket = function (e) {
 	}
 };
 
+const manageTicket = function (action, e) {
+	const form = e.target.closest('form');
+	let fields = {};
+
+	fields.type = form.querySelector('[name="type"]').value;
+	fields.id = form.querySelector('[name="id"]').value;
+	fields.title = form.querySelector('[name="title"]').value;
+	fields.points = form.querySelector('[name="points"]').value;
+	fields.assignee = form.querySelector('[name="assignee"]').value;
+
+	if (validate(fields.type) && validate(fields.id) && validate(fields.title) && validate(fields.assignee) && (fields.type !== 'story' || (fields.type === 'story' && validate(fields.points)))) {
+		fields.status = fields.status ?? 'todo';
+
+		if (action == 'add') {
+			tickets.push(fields);
+		} else {
+		}
+		localStorage.setItem('tickets', JSON.stringify(tickets));
+
+		if (action == 'add') {
+			createTicket(fields);
+		} else {
+		}
+
+		closeModal();
+	} else {
+		alert('Please, complete the Form.');
+	}
+};
+
+const onEditTicket = function (element) {
+	editTicketTemplate.innerHTML = getEditTicketTemplate('edit', element);
+	openModal(editTicketTemplate);
+};
+
 // Modal
 
 const openModal = function (template) {
@@ -187,7 +226,10 @@ const validate = function (value) {
 
 document.addEventListener('click', function (e) {
 	if (e.target.closest('#confirmAddTicket')) {
-		addTicket(e);
+		manageTicket('add', e);
+	}
+	if (e.target.closest('#confirmEditTicket')) {
+		manageTicket('edit', e);
 	}
 	if (e.target.closest('#confirmAddColumn')) {
 		addColumn(e);
