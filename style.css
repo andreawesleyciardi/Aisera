@@ -1,6 +1,8 @@
 :root {
 	--background: #24292f;
-	--primary: #08fdd8;
+	--primary: #ff675b;
+	--secondary: #ffd5d2;
+	--tertiary: #fce7e6;
 	--header-height: 56px;
 	--navbar-width: 240px;
 	--main-header-height: 7.125rem;
@@ -61,8 +63,8 @@ button {
 	font-weight: 600;
 }
 button:hover {
-	color: #0052cc;
-	background-color: #cadefc;
+	color: var(--primary);
+	background-color: var(--secondary);
 }
 
 fieldset {
@@ -220,8 +222,8 @@ form fieldset .button-container button {
 	gap: 1.459rem;
 }
 .jira .jira__navbar .jira__navbar--top .jira__navbar--top-logo {
-	width: 1.251rem;
-	height: 1.251rem;
+	width: 2.251rem;
+	height: 2.251rem;
 }
 .jira .jira__navbar .jira__navbar--top .jira__navbar--top-project {
 	display: flex;
@@ -259,10 +261,10 @@ form fieldset .button-container button {
 	padding: 0.417rem 0.521rem 0.417rem 0.73rem;
 }
 .jira .jira__navbar .jira__navbar--section .jira__navbar--item.active {
-	color: #0052cc;
+	color: var(--primary);
 }
 .jira .jira__navbar .jira__navbar--section .jira__navbar--item.selected {
-	background-color: #cadefc;
+	background-color: var(--secondary);
 	border-radius: 0.208rem;
 	position: relative;
 }
@@ -274,7 +276,7 @@ form fieldset .button-container button {
 	left: 0px;
 	top: 50%;
 	transform: translateY(-50%);
-	background-color: #0052cc;
+	background-color: var(--primary);
 	border-radius: 0px 0.104rem 0.104rem 0px;
 }
 .jira .jira__navbar .jira__navbar--section .jira__navbar--item > div {
@@ -297,7 +299,7 @@ form fieldset .button-container button {
 	padding: 0.208rem;
 }
 .jira .jira__navbar .jira__navbar--section > div.jira__navbar--highlight {
-	background-color: #e6effc;
+	background-color: var(--tertiary);
 	border-radius: 0.417rem;
 }
 .jira .jira__main {

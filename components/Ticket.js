@@ -63,7 +63,7 @@ class Ticket extends HTMLElement {
                 gap: 0.521rem;
             }
             .ticketWrapper:hover {
-                background-color: #091e420f;
+                background-color: var(--secondary);
             }
             [data-header] {
                 grid-area: header;
@@ -82,7 +82,7 @@ class Ticket extends HTMLElement {
                 cursor: pointer;
             }
             [data-title]:hover {
-                color: #0052cc;
+                color: var(--primary);
             }
             [data-type],
             [data-priority] {
