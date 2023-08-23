@@ -64,13 +64,17 @@ const addColumn = function (e) {
 	let fields = {};
 	fields.title = form.querySelector('[name="title"]').value;
 	if (validate(fields.title)) {
-		fields.key = fields.title.replaceAll(' ', '').toLowerCase();
-		columns.push(fields);
-		localStorage.setItem('columns', JSON.stringify(columns));
+		if (document.getElementById(`column-${fields.title.replaceAll(' ', '').toLowerCase()}`) !== null) {
+			alert('The title for the Column that you provided is already used');
+		} else {
+			fields.key = fields.title.replaceAll(' ', '').toLowerCase();
+			columns.push(fields);
+			localStorage.setItem('columns', JSON.stringify(columns));
 
-		createColumn(fields);
+			createColumn(fields);
 
-		closeModal();
+			closeModal();
+		}
 	} else {
 		alert('Please, complete the Form.');
 	}
@@ -78,16 +82,26 @@ const addColumn = function (e) {
 
 // Add Ticket
 
-const placeTicket = function (ticket, status) {
+const placeTicket = function (ticket, status, toUpdateCollection) {
 	const column = document.querySelector(`ais-column[key="${status}"]`);
 	if (column != null) {
 		column.append(ticket);
+	}
+	if (toUpdateCollection == true) {
+		const updatedTickets = tickets.map((element) => {
+			if (element.id == ticket.id) {
+				return Object.assign({}, element, { status: status });
+			}
+			return element;
+		});
+		tickets = updatedTickets;
+		localStorage.setItem('tickets', JSON.stringify(updatedTickets));
 	}
 };
 
 const createTicket = function (element) {
 	const ticket = document.createElement('div');
-	ticket.setAttribute('id', `ticket-${element.key}-container`);
+	ticket.setAttribute('id', `ticket-${element.id}-container`);
 	ticket.innerHTML = `<ais-ticket draggable="true" type="${element.type}" id="${element.id}" title="${element.title}" points="${element.points}" assignee="${element.assignee}" status="${element.status}" />`;
 	placeTicket(ticket, element.status);
 };
@@ -99,6 +113,7 @@ const updateTicket = function (element) {
 
 const updateTickets = function (id) {
 	if (id !== undefined) {
+		// deleting
 		const updatedTickets = tickets.filter((element) => element.id !== id);
 		tickets = updatedTickets;
 		localStorage.setItem('tickets', JSON.stringify(updatedTickets));
@@ -183,7 +198,7 @@ const manageTicket = function (action, e) {
 	fields.status = form.querySelector('[name="status"]').value;
 
 	if (validate(fields.type) && validate(fields.id) && validate(fields.title) && validate(fields.assignee) && (fields.type !== 'story' || (fields.type === 'story' && validate(fields.points)))) {
-		if (document.getElementById(fields.id) !== null) {
+		if (action === 'add' && document.getElementById(fields.id) !== null) {
 			alert('The ID provided is already used or not valid');
 		} else {
 			fields.status = [undefined, null, '', '[]'].includes(fields.status) ? 'todo' : fields.status;

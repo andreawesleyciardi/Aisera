@@ -27,6 +27,10 @@ class Column extends HTMLElement {
 		this.setAttribute('id', `column-${textKey}`);
 		const body = this.shadow.querySelector('[data-body]');
 		body.setAttribute('id', `column-body-${textKey}`);
+		if (textKey === 'todo') {
+			const cancelButton = this.shadow.querySelector('[data-cancel]');
+			cancelButton.setAttribute('style', 'display: none;');
+		}
 
 		const style = document.createElement('style');
 		style.textContent = `
@@ -85,9 +89,14 @@ class Column extends HTMLElement {
 }
 
 Column.prototype.delete = function (that, textKey) {
-	const container = that.closest(`#column-${textKey}-container`);
-	updateColumns(textKey);
-	container.remove();
+	const ticketsInColumn = tickets.filter((ticket) => ticket.status === textKey);
+	if (ticketsInColumn.length > 0) {
+		alert(`You can't delete the selected column because there are active Tickets in it. Move the tickets before to proceed.`);
+	} else {
+		const container = that.closest(`#column-${textKey}-container`);
+		updateColumns(textKey);
+		container.remove();
+	}
 };
 
 // Define element
