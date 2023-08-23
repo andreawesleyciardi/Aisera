@@ -88,7 +88,7 @@ const placeTicket = function (ticket, status) {
 const createTicket = function (element) {
 	const ticket = document.createElement('div');
 	ticket.setAttribute('id', `ticket-${element.key}-container`);
-	ticket.innerHTML = `<ais-ticket type="${element.type}" id="${element.id}" title="${element.title}" points="${element.points}" assignee="${element.assignee}" status="${element.status}" />`;
+	ticket.innerHTML = `<ais-ticket draggable="true" type="${element.type}" id="${element.id}" title="${element.title}" points="${element.points}" assignee="${element.assignee}" status="${element.status}" />`;
 	placeTicket(ticket, element.status);
 };
 
@@ -243,6 +243,34 @@ document.addEventListener('click', function (e) {
 	}
 	if (e.target.closest('.cancelModal')) {
 		closeModal();
+	}
+});
+
+document.addEventListener('dragstart', function (e) {
+	console.log('dragstart');
+	e.dataTransfer.setData('draggedTicket', e.target.id);
+});
+
+document.addEventListener('drop', function (e) {
+	if (e.target.tagName === 'AIS-COLUMN') {
+		e.preventDefault();
+		const draggedTicketId = e.dataTransfer.getData('draggedTicket');
+		if (draggedTicketId != null) {
+			const ticket = document.getElementById(draggedTicketId);
+			const draggedTicketParent = ticket.closest('ais-column');
+			const startColumnKey = draggedTicketParent.getAttribute('key');
+			const endColumnKey = e.target.getAttribute('key');
+			if (startColumnKey !== endColumnKey) {
+				e.target.append(ticket);
+				ticket.setAttribute('status', endColumnKey);
+			}
+		}
+	}
+});
+
+document.addEventListener('dragover', function (e) {
+	if (e.target.tagName === 'AIS-COLUMN') {
+		e.preventDefault();
 	}
 });
 
