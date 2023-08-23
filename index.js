@@ -117,7 +117,8 @@ const getEditTicketTemplate = function (action, element) {
                 <h3>${action === 'add' ? 'Add' : 'Edit'} Ticket</h3>
                 <div ${action === 'edit' && 'style="display: none"'}>
                     <label for="type">Type</label>
-                    <select name="type" value="${element?.type ?? ''}">
+                    <select name="type" value="${element?.type ?? ''}" id="selectTypeTicket">
+                        <option value="" ${element?.type === '' && 'selected'}>-- Select a value --</option>
                         <option value="story" ${element?.type === 'story' && 'selected'}>Story</option>
                         <option value="task"${element?.type === 'task' && 'selected'}>Task</option>
                         <option value="subtask"${element?.type === 'subtask' && 'selected'}>SubTask</option>
@@ -132,7 +133,7 @@ const getEditTicketTemplate = function (action, element) {
                     <label for="title">Title</label>
                     <input type="text" name="title" value="${element?.title ?? ''}" />
                 </div>
-                <div ${element?.type !== 'story' && 'style="display: none"'}>
+                <div ${element?.type !== 'story' && 'style="display: none"'} id="pointsTicketContainer">
                     <label for="points">Points</label>
                     <input type="number" name="points" value="${element?.points ?? ''}" />
                 </div>
@@ -182,24 +183,28 @@ const manageTicket = function (action, e) {
 	fields.status = form.querySelector('[name="status"]').value;
 
 	if (validate(fields.type) && validate(fields.id) && validate(fields.title) && validate(fields.assignee) && (fields.type !== 'story' || (fields.type === 'story' && validate(fields.points)))) {
-		fields.status = [undefined, null, '', '[]'].includes(fields.status) ? 'todo' : fields.status;
-
-		if (action == 'add') {
-			tickets.push(fields);
+		if (document.getElementById(fields.id) !== null) {
+			alert('The ID provided is already used or not valid');
 		} else {
-			const index = tickets.findIndex((element, index) => element.id === fields.id);
-			tickets[index] = fields;
-		}
+			fields.status = [undefined, null, '', '[]'].includes(fields.status) ? 'todo' : fields.status;
 
-		localStorage.setItem('tickets', JSON.stringify(tickets));
+			if (action == 'add') {
+				tickets.push(fields);
+			} else {
+				const index = tickets.findIndex((element, index) => element.id === fields.id);
+				tickets[index] = fields;
+			}
 
-		if (action == 'add') {
-			createTicket(fields);
-		} else {
-			const ticket = document.querySelector(`#${fields.id}`);
-			Object.keys(fields).forEach((key) => {
-				ticket.setAttribute(key, fields[key]);
-			});
+			localStorage.setItem('tickets', JSON.stringify(tickets));
+
+			if (action == 'add') {
+				createTicket(fields);
+			} else {
+				const ticket = document.querySelector(`#${fields.id}`);
+				Object.keys(fields).forEach((key) => {
+					ticket.setAttribute(key, fields[key]);
+				});
+			}
 		}
 
 		closeModal();
@@ -230,6 +235,17 @@ const validate = function (value) {
 };
 
 // addEventListener
+
+document.addEventListener('change', function (e) {
+	if (e.target.id === 'selectTypeTicket') {
+		const pointsField = document.getElementById('pointsTicketContainer');
+		if (e.target.value === 'story') {
+			pointsField.setAttribute('style', 'display: flex;');
+		} else {
+			pointsField.setAttribute('style', 'display: none;');
+		}
+	}
+});
 
 document.addEventListener('click', function (e) {
 	if (e.target.closest('#confirmAddTicket')) {
