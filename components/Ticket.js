@@ -165,6 +165,9 @@ class Ticket extends HTMLElement {
 
 	attributeChangedCallback(name, oldValue, newValue) {
 		this.update(this, { [name]: newValue });
+		if (name === 'status' && oldValue !== null && oldValue !== newValue) {
+			placeTicket(this, newValue);
+		}
 	}
 }
 

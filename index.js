@@ -78,14 +78,18 @@ const addColumn = function (e) {
 
 // Add Ticket
 
-const createTicket = function (element) {
-	const column = document.querySelector(`ais-column[key="${element.status}"]`);
-	const ticket = document.createElement('div');
-	ticket.setAttribute('id', `ticket-${element.key}-container`);
-	ticket.innerHTML = `<ais-ticket type="${element.type}" id="${element.id}" title="${element.title}" points="${element.points}" assignee="${element.assignee}" status="${element.status}" />`;
+const placeTicket = function (ticket, status) {
+	const column = document.querySelector(`ais-column[key="${status}"]`);
 	if (column != null) {
 		column.append(ticket);
 	}
+};
+
+const createTicket = function (element) {
+	const ticket = document.createElement('div');
+	ticket.setAttribute('id', `ticket-${element.key}-container`);
+	ticket.innerHTML = `<ais-ticket type="${element.type}" id="${element.id}" title="${element.title}" points="${element.points}" assignee="${element.assignee}" status="${element.status}" />`;
+	placeTicket(ticket, element.status);
 };
 
 const updateTicket = function (element) {
@@ -114,12 +118,11 @@ const getEditTicketTemplate = function (action, element) {
                 <div ${action === 'edit' && 'style="display: none"'}>
                     <label for="type">Type</label>
                     <select name="type" value="${element?.type ?? ''}">
-                        <option value="story">Story</option>
-                        <option value="task">Task</option>
-                        <option value="subtask">SubTask</option>
-                        <option value="bug">Bug</option>
+                        <option value="story" ${element?.type === 'story' && 'selected'}>Story</option>
+                        <option value="task"${element?.type === 'task' && 'selected'}>Task</option>
+                        <option value="subtask"${element?.type === 'subtask' && 'selected'}>SubTask</option>
+                        <option value="bug"${element?.type === 'bug' && 'selected'}>Bug</option>
                     </select>
-                    
                 </div>
                 <div ${action === 'edit' && 'style="display: none"'}>
                     <label for="id">Id</label>
@@ -137,9 +140,12 @@ const getEditTicketTemplate = function (action, element) {
                     <label for="assignee">Assignee</label>
                     <input type="text" name="assignee" value="${element?.assignee ?? ''}" />
                 </div>
-                <div style="display: none">
-                    <label for="status">Status</label>
-                    <input type="text" name="status" value="${element?.status ?? ''}" />
+                
+                <div ${action === 'add' && 'style="display: none"'}>
+                    <label for="type">Status</label>
+                    <select name="status" value="${element?.status ?? ''}">
+                        ${columns.map((item, index) => '<option value="' + item.key + '" ' + (element?.status === item.key && 'selected') + '>' + item.title + '</option>')}
+                    </select>
                 </div>
 
                 <div class="button-container">
