@@ -29,7 +29,7 @@ class Column extends HTMLElement {
 		body.setAttribute('id', `column-body-${textKey}`);
 		if (textKey === 'todo') {
 			const cancelButton = this.shadow.querySelector('[data-cancel]');
-			cancelButton.setAttribute('style', 'display: none;');
+			cancelButton.setAttribute('style', 'visibility: hidden;');
 		}
 
 		const style = document.createElement('style');
