@@ -1,6 +1,0 @@
-[
-	{ "id": "AIS-TEST", "type": "story", "title": "Test Ticket 1", "assignee": "Andrea Ciardi", "status": "todo", "points": 5 },
-	{ "id": "AIS-TEST", "type": "task", "title": "Test Ticket 2", "assignee": "Gabriel Ciardi", "status": "inprogress" },
-	{ "id": "AIS-TEST", "type": "subtask", "title": "Test Ticket 3", "assignee": "Agapi Panagiotidou", "status": "todo" },
-	{ "id": "AIS-TEST", "type": "bug", "title": "Test Ticket 4", "assignee": "John Smith", "status": "underqa" }
-]
