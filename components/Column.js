@@ -11,7 +11,7 @@ columnTemplate.innerHTML = `
     </div>
 `;
 
-class Column extends HTMLElement {
+class ColumnComponent extends HTMLElement {
 	constructor() {
 		super();
 		// shadow root
@@ -88,7 +88,7 @@ class Column extends HTMLElement {
 	}
 }
 
-Column.prototype.delete = function (that, textKey) {
+ColumnComponent.prototype.delete = function (that, textKey) {
 	const ticketsInColumn = tickets.filter((ticket) => ticket.status === textKey);
 	if (ticketsInColumn.length > 0) {
 		alert(`You can't delete the selected column because there are active Tickets in it. Move the tickets before to proceed.`);
@@ -100,4 +100,4 @@ Column.prototype.delete = function (that, textKey) {
 };
 
 // Define element
-customElements.define('ais-column', Column);
+customElements.define('ais-column', ColumnComponent);

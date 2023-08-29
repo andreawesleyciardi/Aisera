@@ -20,7 +20,7 @@ ticketTemplate.innerHTML = `
     </div>
 `;
 
-class Ticket extends HTMLElement {
+class TicketComponent extends HTMLElement {
 	constructor() {
 		super();
 		// shadow root
@@ -171,13 +171,13 @@ class Ticket extends HTMLElement {
 	}
 }
 
-Ticket.prototype.delete = function (that, id) {
+TicketComponent.prototype.delete = function (that, id) {
 	const container = that.closest(`#${id}`);
 	updateTickets(id);
 	container.remove();
 };
 
-Ticket.prototype.update = function (that, element) {
+TicketComponent.prototype.update = function (that, element) {
 	if (element.type != null) {
 		const type = that.shadow.querySelector('[data-type]');
 		type.setAttribute('src', `assets/${element.type}.svg`);
@@ -208,10 +208,10 @@ Ticket.prototype.update = function (that, element) {
 	}
 };
 
-Ticket.prototype.setTypeImg = function (shadow, img) {
+TicketComponent.prototype.setTypeImg = function (shadow, img) {
 	const type = shadow.querySelector('[data-type]');
 	type.setAttribute('src', `assets/${img}`);
 };
 
 // define elements
-customElements.define('ais-ticket', Ticket);
+customElements.define('ais-ticket', TicketComponent);

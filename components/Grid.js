@@ -5,7 +5,7 @@ gridTemplate.innerHTML = `
     </div>
 `;
 
-class Grid extends HTMLElement {
+class GridComponent extends HTMLElement {
 	constructor() {
 		super();
 		// shadow root
@@ -29,4 +29,4 @@ class Grid extends HTMLElement {
 }
 
 // Define element
-customElements.define('ais-grid', Grid);
+customElements.define('ais-grid', GridComponent);

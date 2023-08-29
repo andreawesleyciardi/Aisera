@@ -1,3 +1,5 @@
+let grid = new Grid();
+
 let columns = [
 	{ title: 'To Do', key: 'todo' },
 	// { title: 'In Progress', key: 'inprogress' },
@@ -64,15 +66,10 @@ const addColumn = function (e) {
 	let fields = {};
 	fields.title = form.querySelector('[name="title"]').value;
 	if (validate(fields.title)) {
-		if (document.getElementById(`column-${fields.title.replaceAll(' ', '').toLowerCase()}`) !== null) {
+		const newColumn = grid.addColumn(fields);
+		if (newColumn === null) {
 			alert('The title for the Column that you provided is already used');
 		} else {
-			fields.key = fields.title.replaceAll(' ', '').toLowerCase();
-			columns.push(fields);
-			localStorage.setItem('columns', JSON.stringify(columns));
-
-			createColumn(fields);
-
 			closeModal();
 		}
 	} else {
@@ -187,6 +184,55 @@ const onEditTicket = function (element) {
 };
 
 const manageTicket = function (action, e) {
+	const form = e.target.closest('form');
+	let fields = {};
+
+	fields.type = form.querySelector('[name="type"]').value;
+	fields.id = form.querySelector('[name="id"]').value;
+	fields.title = form.querySelector('[name="title"]').value;
+	fields.points = form.querySelector('[name="points"]').value;
+	fields.assignee = form.querySelector('[name="assignee"]').value;
+	fields.status = form.querySelector('[name="status"]').value;
+
+	if (validate(fields.type) && validate(fields.id) && validate(fields.title) && validate(fields.assignee) && (fields.type !== 'story' || (fields.type === 'story' && validate(fields.points)))) {
+		const newTicket = grid.addTicket(fields);
+		if (newTicket === null) {
+			alert('The ID provided is already used or not valid');
+		} else {
+			closeModal();
+		}
+
+		// if (action === 'add' && document.getElementById(fields.id) !== null) {
+		// 	alert('The ID provided is already used or not valid');
+		// } else {
+		// 	fields.status = [undefined, null, '', '[]'].includes(fields.status) ? 'todo' : fields.status;
+
+		// 	if (action == 'add') {
+		// 		tickets.push(fields);
+		// 	} else {
+		// 		const index = tickets.findIndex((element, index) => element.id === fields.id);
+		// 		tickets[index] = fields;
+		// 	}
+
+		// 	localStorage.setItem('tickets', JSON.stringify(tickets));
+
+		// 	if (action == 'add') {
+		// 		createTicket(fields);
+		// 	} else {
+		// 		const ticket = document.querySelector(`#${fields.id}`);
+		// 		Object.keys(fields).forEach((key) => {
+		// 			ticket.setAttribute(key, fields[key]);
+		// 		});
+		// 	}
+		// }
+
+		closeModal();
+	} else {
+		alert('Please, complete the Form.');
+	}
+};
+
+const manageTicketOLD = function (action, e) {
 	const form = e.target.closest('form');
 	let fields = {};
 
